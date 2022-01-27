@@ -1,0 +1,135 @@
+version: '3.3'
+
+services:
+  mysql:
+    image: mysql:5.7.33
+    container_name: ${NAME_CONTAINER_MYSQL}-${APP_ENV}
+    hostname: ${NAME_CONTAINER_MYSQL}
+    restart: unless-stopped
+    ports:
+      - "${MYSQL_PORT}:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_vol:/var/lib/mysql
+    networks:
+      - mysql-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}" ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+  redis:
+    image: redis:alpine
+    container_name: ${NAME_CONTAINER_REDIS}-${APP_ENV}
+    hostname: ${NAME_CONTAINER_REDIS}
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - redis_vol:/data
+    networks:
+      - redis-network
+    healthcheck:
+      test: [ "CMD", "redis-cli -h 127.0.0.1 ping" ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+  workspace:
+    build:
+      context: ./api
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+        - COMPOSER_VERSION=${COMPOSER_VERSION}
+        - PHP_MEMORY_LIMIT=${PHP_MEMORY_LIMIT}
+        - PHP_MAX_EXECUTION_TIME=${PHP_MAX_EXECUTION_TIME}
+        - PHP_MAX_UPLOAD=${PHP_MAX_UPLOAD}
+        - PHP_MAX_FILE_UPLOAD=${PHP_MAX_FILE_UPLOAD}
+        - PHP_MAX_POST=${PHP_MAX_POST}
+        - OPCACHE_MEMORY_CONSUMPTION=${OPCACHE_MEMORY_CONSUMPTION}
+        - OPCACHE_INTERNED_STRINGS_BUFFER=${OPCACHE_INTERNED_STRINGS_BUFFER}
+        - OPCACHE_MAX_ACCELERATED_FILES=${OPCACHE_MAX_ACCELERATED_FILES}
+        - OPCACHE_REVALIDATE_FREQ=${OPCACHE_REVALIDATE_FREQ}
+        - OPCACHE_FAST_SHUTDOWN=${OPCACHE_FAST_SHUTDOWN}
+        - OPCACHE_ENABLE_CLI=${OPCACHE_ENABLE_CLI}
+      dockerfile: php.dockerfile
+    image: talenly:php-workspace
+    container_name: ${NAME_CONTAINER_PHP}-${APP_ENV}
+    hostname: ${NAME_CONTAINER_PHP}
+    restart: unless-stopped
+    volumes:
+      - ${SRC_PATH}:/var/www/api:delegated
+    networks:
+      - api-network
+      - redis-network
+      - mysql-network
+    depends_on:
+      - mysql
+      - redis
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: nginx.dockerfile
+      args:
+        - NGINX_VERSION=${NGINX_VERSION}
+    image: talenly:nginx
+    container_name: ${NAME_CONTAINER_NGINX}-${APP_ENV}
+    hostname: ${NAME_CONTAINER_NGINX}
+    restart: unless-stopped
+    ports:
+      - ${NGINX_PORT}:80
+    volumes:
+      - ${SRC_PATH}:/var/www/api:delegated
+    depends_on:
+      - workspace
+      - redis
+      - mysql
+    networks:
+      - api-network
+    healthcheck:
+      test: wget --quiet --tries=1 --spider http://localhost || exit 1z
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  horizon:
+    build:
+      context: ./api
+      args:
+        - ENABLE_HORIZON=${ENABLE_HORIZON}
+      dockerfile: horizon.dockerfile
+    image: talenly:php-horizon
+    container_name: ${NAME_CONTAINER_HORIZON}-${APP_ENV}
+    hostname: ${NAME_CONTAINER_HORIZON}
+    volumes:
+      - ${SRC_PATH}:/var/www/api:delegated
+    networks:
+      - api-network
+      - redis-network
+  cron:
+    build:
+      context: ./api
+      args:
+        - ENABLE_CRONTAB=${ENABLE_CRONTAB}
+      dockerfile: cron.dockerfile
+    image: talenly:php-cron
+    container_name: ${NAME_CONTAINER_CRON}-${APP_ENV}
+    hostname: ${NAME_CONTAINER_CRON}
+    volumes:
+      - ${SRC_PATH}:/var/www/api:delegated
+    networks:
+      - api-network
+networks:
+  api-network:
+    driver: bridge
+  redis-network:
+    driver: bridge
+  mysql-network:
+    driver: bridge
+volumes:
+  mysql_vol:
+    driver: local
+  redis_vol:
+    driver: local
