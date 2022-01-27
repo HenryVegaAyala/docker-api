@@ -14,7 +14,7 @@ Ambiente de producción
 Consideraciones: El .env se debe configurar en base a necesidad de puertos disponibles, 
 el horizon y el cron solo se activa si en el .env se coloca estado de **1** que significa activado. 
 
-##Requisitos del servidor
+## Requisitos del servidor
 
  - Docker
  - Docker Compose
