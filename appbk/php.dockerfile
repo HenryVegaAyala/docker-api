@@ -4,7 +4,6 @@ FROM php:${PHP_VERSION}-fpm-alpine
 ####### EXTENSIONS
 RUN apk --update --no-cache add \
   curl \
-  grep \
   build-base \
   cmake \
   file \
@@ -32,22 +31,18 @@ RUN apk --update --no-cache add \
   imap-dev \
   libxslt-dev \
   php7-simplexml \
-  openssh-client \
-  ca-certificates \
   bash
 
 ####### PHP EXTENSION
-RUN docker-php-ext-install -j8 mysqli pdo pdo_mysql tokenizer opcache pcntl gd bcmath zip calendar exif gettext imap shmop sysvmsg sysvsem sysvshm xsl sockets
+RUN docker-php-ext-install -j8 mysqli pdo pdo_mysql tokenizer opcache pcntl gd bcmath zip exif gettext imap shmop sysvmsg sysvsem sysvshm xsl sockets
 
 ####### PHP EXTENSION PECL
 RUN pecl channel-update pecl.php.net \
-    && pecl install memcached \
     && pecl install imagick \
     && pecl install mcrypt-1.0.3 \
     && pecl install redis \
     && pecl install igbinary \
     && pecl install msgpack \
-    && docker-php-ext-enable memcached \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable mcrypt \
     && docker-php-ext-enable redis \

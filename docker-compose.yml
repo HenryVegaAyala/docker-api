@@ -40,7 +40,7 @@ services:
       retries: 5
   workspace:
     build:
-      context: ./api
+      context: ./appbk
       args:
         - PHP_VERSION=${PHP_VERSION}
         - COMPOSER_VERSION=${COMPOSER_VERSION}
@@ -96,7 +96,7 @@ services:
       retries: 5
   horizon:
     build:
-      context: ./api
+      context: ./appbk
       args:
         - ENABLE_HORIZON=${ENABLE_HORIZON}
       dockerfile: horizon.dockerfile
@@ -110,7 +110,7 @@ services:
       - redis-network
   cron:
     build:
-      context: ./api
+      context: ./appbk
       args:
         - ENABLE_CRONTAB=${ENABLE_CRONTAB}
       dockerfile: cron.dockerfile
