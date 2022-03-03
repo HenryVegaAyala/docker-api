@@ -132,6 +132,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 ####### MacOS staff group's gid is 20, so is the dialout group in alpine linux. We're not using it, let's just remove it.
 RUN delgroup dialout
 
+####### CREATE USER DEPLOY
+RUN mkdir /home/deploy
+RUN useradd deploy
+RUN chown deploy:deploy /var/www
+
 ####### CONFIG DIRECTORY
 RUN mkdir -p /var/www/api
 WORKDIR /var/www/api

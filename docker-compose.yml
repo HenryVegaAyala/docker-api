@@ -84,9 +84,9 @@ services:
     volumes:
       - ${SRC_PATH}:/var/www/api:delegated
     depends_on:
-      - workspace
-      - redis
       - mysql
+      - redis
+      - workspace
     networks:
       - api-network
     healthcheck:
@@ -105,6 +105,8 @@ services:
     hostname: ${NAME_CONTAINER_HORIZON}
     volumes:
       - ${SRC_PATH}:/var/www/api:delegated
+    depends_on:
+      - workspace
     networks:
       - api-network
       - redis-network
@@ -119,6 +121,8 @@ services:
     hostname: ${NAME_CONTAINER_CRON}
     volumes:
       - ${SRC_PATH}:/var/www/api:delegated
+    depends_on:
+      - workspace
     networks:
       - api-network
 networks:
