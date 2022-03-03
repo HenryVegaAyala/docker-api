@@ -2,10 +2,7 @@ version: '3.3'
 
 services:
   mysql:
-    build:
-      context: ./mysql
-      dockerfile: mysql.dockerfile
-    image: talenly:mysql
+    image: mysql:5.7.33
     container_name: ${NAME_CONTAINER_MYSQL}-${APP_ENV}
     hostname: ${NAME_CONTAINER_MYSQL}
     restart: always
