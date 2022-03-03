@@ -2,7 +2,9 @@ version: '3.3'
 
 services:
   mysql:
-    image: mysql:5.7.33
+    build:
+      context: ./mysql
+      dockerfile: mysql.dockerfile
     container_name: ${NAME_CONTAINER_MYSQL}-${APP_ENV}
     hostname: ${NAME_CONTAINER_MYSQL}
     restart: unless-stopped
@@ -23,7 +25,9 @@ services:
       timeout: 10s
       retries: 5
   redis:
-    image: redis:alpine
+    build:
+      context: ./redis
+      dockerfile: redis.dockerfile
     container_name: ${NAME_CONTAINER_REDIS}-${APP_ENV}
     hostname: ${NAME_CONTAINER_REDIS}
     restart: unless-stopped
