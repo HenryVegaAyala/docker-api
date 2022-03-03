@@ -72,6 +72,9 @@ services:
     depends_on:
       - mysql
       - redis
+    links:
+      - mysql
+      - redis
   nginx:
     build:
       context: ./nginx
