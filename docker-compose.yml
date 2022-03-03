@@ -23,10 +23,7 @@ services:
       timeout: 10s
       retries: 5
   redis:
-    build:
-      context: ./redis
-      dockerfile: redis.dockerfile
-    image: talenly:redis
+    image: redis:latest
     container_name: ${NAME_CONTAINER_REDIS}-${APP_ENV}
     hostname: ${NAME_CONTAINER_REDIS}
     restart: always
