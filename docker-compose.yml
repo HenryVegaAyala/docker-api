@@ -23,7 +23,7 @@ services:
       timeout: 10s
       retries: 5
   redis:
-    image: redis:latest
+    image: redis:alpine
     container_name: ${NAME_CONTAINER_REDIS}-${APP_ENV}
     hostname: ${NAME_CONTAINER_REDIS}
     restart: always
