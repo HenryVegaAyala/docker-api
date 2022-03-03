@@ -5,6 +5,7 @@ services:
     build:
       context: ./mysql
       dockerfile: mysql.dockerfile
+    image: talenly:mysql
     container_name: ${NAME_CONTAINER_MYSQL}-${APP_ENV}
     hostname: ${NAME_CONTAINER_MYSQL}
     restart: unless-stopped
@@ -28,6 +29,7 @@ services:
     build:
       context: ./redis
       dockerfile: redis.dockerfile
+    image: talenly:redis
     container_name: ${NAME_CONTAINER_REDIS}-${APP_ENV}
     hostname: ${NAME_CONTAINER_REDIS}
     restart: unless-stopped
