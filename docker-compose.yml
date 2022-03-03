@@ -8,7 +8,7 @@ services:
     image: talenly:mysql
     container_name: ${NAME_CONTAINER_MYSQL}-${APP_ENV}
     hostname: ${NAME_CONTAINER_MYSQL}
-    restart: unless-stopped
+    restart: always
     ports:
       - "${MYSQL_PORT}:3306"
     environment:
@@ -32,7 +32,7 @@ services:
     image: talenly:redis
     container_name: ${NAME_CONTAINER_REDIS}-${APP_ENV}
     hostname: ${NAME_CONTAINER_REDIS}
-    restart: unless-stopped
+    restart: always
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
@@ -65,7 +65,7 @@ services:
     image: talenly:php-workspace
     container_name: ${NAME_CONTAINER_PHP}-${APP_ENV}
     hostname: ${NAME_CONTAINER_PHP}
-    restart: unless-stopped
+    restart: always
     volumes:
       - ${SRC_PATH}:/var/www/api:delegated
     networks:
@@ -84,7 +84,7 @@ services:
     image: talenly:nginx
     container_name: ${NAME_CONTAINER_NGINX}-${APP_ENV}
     hostname: ${NAME_CONTAINER_NGINX}
-    restart: unless-stopped
+    restart: always
     ports:
       - ${NGINX_PORT}:80
     volumes:
@@ -109,6 +109,7 @@ services:
     image: talenly:php-horizon
     container_name: ${NAME_CONTAINER_HORIZON}-${APP_ENV}
     hostname: ${NAME_CONTAINER_HORIZON}
+    restart: always
     volumes:
       - ${SRC_PATH}:/var/www/api:delegated
     depends_on:
@@ -125,6 +126,7 @@ services:
     image: talenly:php-cron
     container_name: ${NAME_CONTAINER_CRON}-${APP_ENV}
     hostname: ${NAME_CONTAINER_CRON}
+    restart: always
     volumes:
       - ${SRC_PATH}:/var/www/api:delegated
     depends_on:
