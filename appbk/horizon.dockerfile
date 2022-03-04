@@ -8,10 +8,6 @@ RUN apk --update --no-cache add \
 ####### REMOVE CACHE
 RUN rm -rf /tmp/* /var/cache/apk/*
 
-# Add UID '1000' to www-data
-RUN usermod -u 1000 www-data
-RUN chown -R www-data:www-data .
-
 ADD horizon/docker-entrypoint.sh /etc/docker-entrypoint.sh
 
 ADD horizon/config/supervisord.conf /etc/supervisord.conf
