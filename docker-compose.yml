@@ -114,6 +114,7 @@ services:
     networks:
       - api-network
       - redis-network
+      - mysql-network
   cron:
     build:
       context: ./appbk
@@ -130,6 +131,8 @@ services:
       - workspace
     networks:
       - api-network
+      - redis-network
+      - mysql-network
 networks:
   api-network:
     driver: bridge
